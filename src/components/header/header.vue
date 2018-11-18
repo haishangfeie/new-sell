@@ -1,40 +1,55 @@
 <template>
   <div class="header">
     <div class="content-wrap">
-      <img :src="seller.avatar" width="64" height="64" alt="" class="avatar">
+      <img :src="seller.avatar"
+           width="64"
+           height="64"
+           alt=""
+           class="avatar">
       <div class="content">
         <div class="title">
           <span class="brand"></span>
           <span class="name">{{seller.name}}</span>
         </div>
         <div class="desc">{{seller.description}}/{{seller.deliveryTime}}分钟送达</div>
-        <div v-if="seller.supports" class="support-wrap">
+        <div v-if="seller.supports"
+             class="support-wrap">
           <!-- <span class="icon" :class="supportTypeMap[seller.supports[0].type]"></span> -->
           <!-- :size="48" :score="seller.score" -->
-          <support-icon :size="1" :iconType="seller.supports[0].type"></support-icon>
+          <support-icon :size="1"
+                        :iconType="seller.supports[0].type"></support-icon>
           <span class="support">{{seller.supports[0].description}}</span>
         </div>
       </div>
-      <div v-if="seller.supports" class="support-qty-wrap" @click="showDetail">
+      <div v-if="seller.supports"
+           class="support-qty-wrap"
+           @click="showDetail">
         <span class="support-qty">{{seller.supports.length}}个</span>
         <i class="icon icon-keyboard_arrow_right"></i>
       </div>
     </div>
-    <div v-if="seller.supports" class="bulletin-wrap" @click="showDetail">
+    <div v-if="seller.supports"
+         class="bulletin-wrap"
+         @click="showDetail">
       <span class="bulletin-icon"></span>
       <span class="bulletin-text">{{seller.bulletin}}</span>
       <i class="icon-keyboard_arrow_right bulletin-arrow"></i>
     </div>
     <div class="background-wrap">
-      <img :src="seller.avatar" width="100%" height="100%" class="background">
+      <img :src="seller.avatar"
+           width="100%"
+           height="100%"
+           class="background">
     </div>
     <transition name="fade">
-      <div v-show="isShowDetail" class="detail-wrap">
+      <div v-show="isShowDetail"
+           class="detail-wrap">
         <div class="detail-content-wrap clearfix">
           <div class="detail-content">
             <h1 class="name">{{seller.name}}</h1>
             <div class="stars-wrap">
-              <stars :size="48" :score="seller.score"></stars>
+              <stars :size="48"
+                     :score="seller.score"></stars>
             </div>
             <div class="detail-title-wrap">
               <div class="line"></div>
@@ -42,10 +57,13 @@
               <div class="line"></div>
             </div>
             <ul class="support-list">
-              <li class="support-item" v-for="(item,index) in seller.supports" :key="index">
+              <li class="support-item"
+                  v-for="(item,index) in seller.supports"
+                  :key="index">
                 <!-- <i class="support-type" :class="supportTypeMap[item.type]"></i> -->
                 <div class="support-icon-wrap">
-                  <support-icon :size="2" :iconType="item.type"></support-icon>
+                  <support-icon :size="2"
+                                :iconType="item.type"></support-icon>
                 </div>
                 <span class="support-description">{{item.description}}</span>
               </li>
@@ -60,7 +78,8 @@
             </div>
           </div>
         </div>
-        <div class="detail-close" @click="hideDetail">
+        <div class="detail-close"
+             @click="hideDetail">
           <i class="icon-close"></i>
         </div>
       </div>
@@ -69,36 +88,36 @@
 </template>
 
 <script>
-import Stars from '@@/stars/stars'
-import SupportIcon from '@@/support-icon/support-icon'
-  export default {
-    components:{
-      Stars,
-      SupportIcon
-    },
-    props:{
-      seller:{
-        type:Object
-      }
-    },
-    data(){
-      return {
-        isShowDetail:false
-      }
-    },
-    created(){
-      this.supportTypeMap = ['decrease','discount','special','invoice','guarantee']
-    },
-    methods:{
-      showDetail(){
-        this.isShowDetail = true
-      },
-      hideDetail(){
-        this.isShowDetail = false
-      }
+import Stars from '@@/stars/stars';
+import SupportIcon from '@@/support-icon/support-icon';
+export default {
+  components: {
+    Stars,
+    SupportIcon
+  },
+  props: {
+    seller: {
+      type: Object
     }
-    
+  },
+  data() {
+    return {
+      isShowDetail: false
+    };
+  },
+  created() {
+    this.supportTypeMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
+  },
+  methods: {
+    showDetail() {
+      this.isShowDetail = true;
+    },
+    hideDetail() {
+      this.isShowDetail = false;
+    }
   }
+
+};
 </script>
 
 <style lang="stylus" scoped>
@@ -196,7 +215,7 @@ import SupportIcon from '@@/support-icon/support-icon'
     position: fixed
     top: 0
     left: 0
-    z-index: 100
+    z-index: 50
     width: 100%
     height: 100%
     overflow: auto
@@ -220,6 +239,7 @@ import SupportIcon from '@@/support-icon/support-icon'
         .stars-wrap
           margin-top: 18px
           padding: 2px 0
+          font-size: 0
           text-align: center
         .detail-title-wrap
           display: flex

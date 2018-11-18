@@ -1,37 +1,46 @@
 <template>
   <div class="cartcontrol">
     <transition name="move_x">
-      <div class="decrease" v-show="food.count>0" @click="decreaseCart">
+      <div class="decrease"
+           v-show="food.count>0"
+           @click.stop="decreaseCart">
         <div class="inner icon-remove_circle_outline"></div>
       </div>
     </transition>
-    <div class="count" v-show="food.count>0">{{food.count}}</div>
-    <div class="increase icon-add_circle" @click="increaseCart"></div>
+    <div class="count"
+         v-show="food.count>0">{{food.count}}</div>
+    <div class="increase icon-add_circle"
+         @click.stop="increaseCart"></div>
   </div>
 </template>
 
 <script>
-  export default {
-    props:{
-      food:{
-        type:Object
+import eventBus from '@/common/js/eventBus';
+export default {
+  props: {
+    food: {
+      type: Object
+    }
+  },
+  methods: {
+    increaseCart(e) {
+      if (!this.food.count) {
+        this.$set(this.food, 'count', 1);
+      } else {
+        this.food.count++;
       }
+      // 性能优化，避免两个动画同时执行
+      this.$nextTick(() => {
+        eventBus.$emit('cart-add', e.target);
+      });
     },
-    methods:{
-      increaseCart(){
-        if(!this.food.count){
-          this.$set(this.food,'count',1)
-        } else {
-          this.food.count++
-        }
-      },
-      decreaseCart(){
-        if(this.food.count){
-          this.food.count--
-        }
+    decreaseCart() {
+      if (this.food.count) {
+        this.food.count--;
       }
     }
   }
+};
 </script>
 
 <style lang="stylus" scoped>

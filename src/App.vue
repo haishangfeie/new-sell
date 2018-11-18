@@ -12,32 +12,48 @@
         <router-link to="/seller">商家</router-link>
       </div>
     </div>
-    <router-view :seller="seller"></router-view>
+    <keep-alive>
+      <router-view :seller="seller"
+                   :ratings="ratings"></router-view>
+    </keep-alive>
+
   </div>
 </template>
 
 <script>
-  import VHeader from '@@/header/header.vue'
-  const IsSuccess = 0;
-  export default {
-    components:{
-      VHeader
-    },
-    data(){
-      return {
-        seller:{}
+import VHeader from '@@/header/header.vue';
+import { urlParse } from 'common/js/util';
+const IsSuccess = 0;
+export default {
+  components: {
+    VHeader
+  },
+  data() {
+    return {
+      seller: {
+        sellerId: (() => {
+          let queryParams = urlParse();
+          return queryParams.id || 0;
+        })()
+      },
+      ratings: {},
+    };
+  },
+  created() {
+    this.$http.get('/api/seller').then(res => {
+      if (res.data.errno === IsSuccess) {
+        this.seller = Object.assign({}, this.seller, res.data.data);
       }
-    },
-    created(){
-      this.$http.get('/api/seller').then(res=>{
-        if(res.data.errno === IsSuccess){
-          this.seller = res.data.data;
-        }
-      })
-    },
-    methods:{
-    }
+    });
+    this.$http.get('/api/ratings').then(res => {
+      if (res.data.errno === IsSuccess) {
+        this.ratings = res.data.data;
+      }
+    });
+  },
+  methods: {
   }
+};
 </script>
 
 <style lang="stylus">

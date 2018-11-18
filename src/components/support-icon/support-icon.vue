@@ -1,26 +1,27 @@
 <template>
-  <span class="icon" :class="[supportTypeMap[iconType],classSize]"></span>
+  <span class="icon"
+        :class="[supportTypeMap[iconType],classSize]"></span>
 </template>
 
 <script>
-  export default {
-    props:{
-      size:{
-        type:Number
-      },
-      iconType:{
-        type:Number
-      }
+export default {
+  props: {
+    size: {
+      type: Number
     },
-    computed:{
-      classSize (){
-        return 'size_' + this.size
-      }
-    },
-    created(){
-      this.supportTypeMap = ['decrease','discount','special','invoice','guarantee']
-    },
-  }
+    iconType: {
+      type: Number
+    }
+  },
+  computed: {
+    classSize() {
+      return 'size_' + this.size;
+    }
+  },
+  created() {
+    this.supportTypeMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
+  },
+};
 </script>
 
 <style lang="stylus" scoped>

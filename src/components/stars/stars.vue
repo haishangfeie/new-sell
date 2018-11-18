@@ -1,45 +1,49 @@
 <template>
-  <div class="stars" :class="classSize">
-    <span class="star" v-for="(starType,index) in starTypes" :key="index" :class="starType"></span>
+  <div class="stars"
+       :class="classSize">
+    <span class="star"
+          v-for="(starType,index) in starTypes"
+          :key="index"
+          :class="starType"></span>
   </div>
 </template>
 
 <script>
-  const CLA_ON = 'on'
-  const CLA_OFF = 'off'
-  const CLA_HALF = 'half'
-  const Length = 5
-  export default {
-    props:{
-      size:{
-        type:Number
-      },
-      score:{
-        type:Number
-      }
+const CLA_ON = 'on';
+const CLA_OFF = 'off';
+const CLA_HALF = 'half';
+const Length = 5;
+export default {
+  props: {
+    size: {
+      type: Number
     },
-    computed:{
-      classSize(){
-        return 'stars_' + this.size
-      },
-      starTypes(){
-        let score = Math.floor(this.score*2) / 2;
-        let integerCount = Math.floor(score);
-        let hasDecimal = score % 1 !==0;
-        let result = [];
-        for(let i =0;i<integerCount;i++){
-          result.push(CLA_ON)
-        }
-        if(hasDecimal){
-          result.push(CLA_HALF)
-        }
-        while(result.length< Length){
-          result.push(CLA_OFF)
-        }
-        return result
+    score: {
+      type: Number
+    }
+  },
+  computed: {
+    classSize() {
+      return 'stars_' + this.size;
+    },
+    starTypes() {
+      let score = Math.floor(this.score * 2) / 2;
+      let integerCount = Math.floor(score);
+      let hasDecimal = score % 1 !== 0;
+      let result = [];
+      for (let i = 0; i < integerCount; i++) {
+        result.push(CLA_ON);
       }
+      if (hasDecimal) {
+        result.push(CLA_HALF);
+      }
+      while (result.length < Length) {
+        result.push(CLA_OFF);
+      }
+      return result;
     }
   }
+};
 </script>
 
 <style lang="stylus" scoped>
@@ -50,14 +54,14 @@
   .star
     display: inline-block
     background-repeat: no-repeat
+    &:last-child
+      margin-right: 0 !important
   &.stars_48
     .star
       width: 20px
       height: 20px
       margin-right: 20px
       background-size: 20px 20px
-      &:last-child
-        margin-right: 0
       &.on
         bg-img('star48_on')
       &.half

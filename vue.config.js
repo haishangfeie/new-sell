@@ -36,5 +36,6 @@ module.exports = {
         common: path.join(__dirname, '/src/common')
       }
     }
-  }
+  },
+  productionSourceMap:false
 };

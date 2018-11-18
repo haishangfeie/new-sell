@@ -1,34 +1,53 @@
 <template>
   <div class="goods">
-    <div class="menu-wrapper" ref="menuWrapper">
+    <div class="menu-wrapper"
+         ref="menuWrapper">
       <ul class="menu-list">
-        <li class="menu-item border-1px" :class="{active:menuIndex===index}" v-for="(item,index) in goods" :key="index" @click="tapMenuItem(index)">
+        <li class="menu-item border-1px"
+            :class="{active:menuIndex===index}"
+            v-for="(item,index) in goods"
+            :key="index"
+            @click="tapMenuItem(index)">
           <div class="item-text">
-            <span class="icon-wrap" v-if="item.type!==-1">
-              <support-icon :size="3" :iconType="item.type"></support-icon>
+            <span class="icon-wrap"
+                  v-if="item.type!==-1">
+              <support-icon :size="3"
+                            :iconType="item.type"></support-icon>
             </span>
             <span class="item-name">{{item.name}}</span>
           </div>
         </li>
       </ul>
     </div>
-    <div class="foods-wrapper" ref="foodsWrapper">
+    <div class="foods-wrapper"
+         ref="foodsWrapper">
       <div>
-        <div v-for="(item,index) in goods" :key="index" class="food-list-wrap">
+        <div v-for="(item,index) in goods"
+             :key="index"
+             class="food-list-wrap">
           <h1 class="list-name">{{item.name}}</h1>
           <ul class="list">
-            <li class="food border-1px" v-for="(food,idx) in item.foods" :key="idx">
-              <img :src="food.icon" width="57" height="57" alt="" class="icon">
+            <li class="food border-1px"
+                v-for="(food,idx) in item.foods"
+                :key="idx"
+                @click="showDetail(food)">
+              <img :src="food.icon"
+                   width="57"
+                   height="57"
+                   alt=""
+                   class="icon">
               <div class="content">
                 <h2 class="food-name">{{food.name}}</h2>
-                <div v-show="food.description" class="desc">{{food.description}}</div>
+                <div v-show="food.description"
+                     class="desc">{{food.description}}</div>
                 <div class="extra">
                   <span class="sell-count">月售{{food.sellCount}}份</span>
                   <span>好评率{{food.rating}}%</span>
                 </div>
                 <div class="price-wrap">
                   <span class="price">￥{{food.price}}</span>
-                  <span v-show="food.oldPrice" class="old-price">￥{{food.oldPrice}}</span>
+                  <span v-show="food.oldPrice"
+                        class="old-price">￥{{food.oldPrice}}</span>
                 </div>
                 <div class="cartcontrol-wrapper">
                   <Cartcontrol :food="food"></Cartcontrol>
@@ -39,110 +58,122 @@
         </div>
       </div>
     </div>
-    <shopcart :selectFoods="selectFoods" :minPrice="seller.minPrice" :deliveryPrice="seller.deliveryPrice"></shopcart>
+    <shopcart :selectFoods="selectFoods"
+              :minPrice="seller.minPrice"
+              :deliveryPrice="seller.deliveryPrice">
+    </shopcart>
+    <food ref="food"
+          :food="selectedFood"></food>
   </div>
 </template>
 
 <script>
-  import SupportIcon from '@@/support-icon/support-icon'
-  import Shopcart from '@@/shopcart/shopcart'
-  import Cartcontrol from '@@/cartcontrol/cartcontrol'
-  import BScroll from 'better-scroll'
-  const IsSuccess = 0;
-  export default {
-    components:{
-      SupportIcon,
-      Shopcart,
-      Cartcontrol
-    },
-    props:{
-      seller:{
-        type:Object,
-        defalut(){return {}}
-      }
-    },
-    data(){
-      return {
-        goods:[],
-        menuScroll:null,
-        foodsScroll:null,
-        foodsHeights:null,
-        menuIndex:0
-      }
-    },
-    computed:{
-      selectFoods(){
-        let select = []
-        this.goods.forEach(good=>{
-          good.foods.forEach(food=>{
-            if(food.count){
-              select.push(food)
-            }
-          })
-        })
-        return select
-      }
-    },
-    created(){
-      this.$http.get('/api/goods').then(res=>{
-        if(res.data.errno ===IsSuccess){
-          this.goods = res.data.data
-          this.$nextTick(()=>{
-            this._initScroll()
-            this._calculativeHeight()
-          })
-        }
-      })
-    },
-    methods:{
-      _initScroll(){
-        this.menuScroll = new BScroll(this.$refs.menuWrapper,{
-          click:true
-        });
-        this.foodsScroll = new BScroll(this.$refs.foodsWrapper,{
-          probeType:3,
-          click:true
-        })
-        // 绑定食物列表的滚动事件
-        this.foodsScroll.on('scroll',(event)=>{
-          let height = Math.abs(Math.floor(event.y))
-          // console.log(height)
-          // console.log(this.foodsHeights)
-          for(let i=0;i<this.foodsHeights.length;i++){
-            let height1 = this.foodsHeights[i]
-            let height2 = this.foodsHeights[i+1]
-            if(!height2){
-              this.menuIndex = i;
-              this.menuScroll.scrollToElement(this.$refs.menuWrapper.getElementsByClassName('menu-item')[i],300)
-              return;
-            }
-            if(height>=height1 && height<height2){
-              this.menuIndex = i;
-              this.menuScroll.scrollToElement(this.$refs.menuWrapper.getElementsByClassName('menu-item')[i],300)
-              return;
-            }
+import SupportIcon from '@@/support-icon/support-icon';
+import Shopcart from '@@/shopcart/shopcart';
+import Cartcontrol from '@@/cartcontrol/cartcontrol';
+import Food from '@@/food/food';
+import BScroll from 'better-scroll';
+const IsSuccess = 0;
+export default {
+  components: {
+    SupportIcon,
+    Shopcart,
+    Cartcontrol,
+    Food
+  },
+  props: {
+    seller: {
+      type: Object,
+      defalut() { return {}; }
+    }
+  },
+  data() {
+    return {
+      goods: [],
+      menuScroll: null,
+      foodsScroll: null,
+      foodsHeights: null,
+      menuIndex: 0,
+      selectedFood:{}
+    };
+  },
+  computed: {
+    selectFoods() {
+      let select = [];
+      this.goods.forEach(good => {
+        good.foods.forEach(food => {
+          if (food.count) {
+            select.push(food);
           }
-        })
-      },
-      _calculativeHeight(){
-        let foodsHeights = [];
-        let height = 0;
-        foodsHeights.push(height);
-        // 获取每个foods模块的高度
-        let foodsEl = this.$refs.foodsWrapper.getElementsByClassName('food-list-wrap');
-        for(let i=0;i<foodsEl.length;i++){
-          let item = foodsEl[i];
-          let itemHeight = item.clientHeight;
-          height += itemHeight
-          foodsHeights.push(height)
-        }
-        this.foodsHeights = foodsHeights
-      },
-      tapMenuItem(index){
-        this.foodsScroll.scrollToElement(this.$refs.foodsWrapper.getElementsByClassName('food-list-wrap')[index],300)
+        });
+      });
+      return select;
+    }
+  },
+  created() {
+    this.$http.get('/api/goods').then(res => {
+      if (res.data.errno === IsSuccess) {
+        this.goods = res.data.data;
+        this.$nextTick(() => {
+          this._initScroll();
+          this._calculativeHeight();
+        });
       }
+    });
+  },
+  methods: {
+    _initScroll() {
+      this.menuScroll = new BScroll(this.$refs.menuWrapper, {
+        click: true
+      });
+      this.foodsScroll = new BScroll(this.$refs.foodsWrapper, {
+        probeType: 3,
+        click: true
+      });
+      // 绑定食物列表的滚动事件
+      this.foodsScroll.on('scroll', (event) => {
+        let height = Math.abs(Math.floor(event.y));
+        // console.log(height)
+        // console.log(this.foodsHeights)
+        for (let i = 0; i < this.foodsHeights.length; i++) {
+          let height1 = this.foodsHeights[i];
+          let height2 = this.foodsHeights[i + 1];
+          if (!height2) {
+            this.menuIndex = i;
+            this.menuScroll.scrollToElement(this.$refs.menuWrapper.getElementsByClassName('menu-item')[i], 300);
+            return;
+          }
+          if (height >= height1 && height < height2) {
+            this.menuIndex = i;
+            this.menuScroll.scrollToElement(this.$refs.menuWrapper.getElementsByClassName('menu-item')[i], 300);
+            return;
+          }
+        }
+      });
+    },
+    _calculativeHeight() {
+      let foodsHeights = [];
+      let height = 0;
+      foodsHeights.push(height);
+      // 获取每个foods模块的高度
+      let foodsEl = this.$refs.foodsWrapper.getElementsByClassName('food-list-wrap');
+      for (let i = 0; i < foodsEl.length; i++) {
+        let item = foodsEl[i];
+        let itemHeight = item.clientHeight;
+        height += itemHeight;
+        foodsHeights.push(height);
+      }
+      this.foodsHeights = foodsHeights;
+    },
+    tapMenuItem(index) {
+      this.foodsScroll.scrollToElement(this.$refs.foodsWrapper.getElementsByClassName('food-list-wrap')[index], 300);
+    },
+    showDetail(food) {
+      this.selectedFood = food;
+      this.$refs.food.show();
     }
   }
+};
 </script>
 
 <style lang="stylus" scoped>
